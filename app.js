@@ -1,402 +1,255 @@
-// Initialize Firebase
-var firebaseConfig = {
-	apiKey: "AIzaSyB-vGEOyySC4JMYdtG1Ret4pbiZLmhknLs",
-	authDomain: "jeanycar-25a07.firebaseapp.com",
-	databaseURL: "https://jeanycar-25a07-default-rtdb.asia-southeast1.firebasedatabase.app/",
-	projectId: "jeanycar-25a07",
-	storageBucket: "jeanycar-25a07.appspot.com",
-	messagingSenderId: "469828085729",
-	appId: "1:469828085729:web:4bc30a96b8e227f0c9d4a0",
-
-};
-
-firebase.initializeApp(firebaseConfig);
-
-// Get a reference to the Firebase Realtime Database
-const internetTime = Date.now();
-
-var items = 10;
-var database = firebase.database();
-
-// Get DOM elements
-
-var sessionId = document.getElementById('session_id');
-
-var showFormButton = document.getElementById('show-form-button');
-
-var moreButton = document.getElementById('more-button');
-
-var notif = document.getElementById('header_notify');
-
-var numLikes = document.getElementById('numberLikes');
-
-var myForm = document.getElementById('postLink');
-var myContent = document.getElementById('column1');
-
-var myModal = document.getElementById('showmodal');
-var myModal_user = document.getElementById('m_username');
-var myModal_vistor = document.getElementById('m_visitor');
-var myModal_link = document.getElementById('m_link');
-
-var myModal_close = document.getElementById('m_close');
-var myModal_delete = document.getElementById('m_delete');
-var myModal_delete_id = document.getElementById('delete_id');
-
-var visitLink = document.getElementById("visit_link");
-
-var saveButton = document.getElementById('save-button');
-var cancelButton = document.getElementById('cancel-button');
-
-var titleInput = document.getElementById('title');
-var quoteTextarea = document.getElementById('quote');
-var authorInput = document.getElementById('author');
-var quoteTableBody = document.getElementById('quote-table-body');
-
-var postFrom = document.getElementById('addst');
-
-sessionStorage.setItem("data", internetTime);
-
-let inputChanged = false;
-
-// Show form when the "Show Form" button is clicked
-showFormButton.addEventListener('click', function() {
-	showFormButton.style.display = 'none';
-	myContent.style.display = 'none';
-
-	myForm.style.display = 'block';
-	notif.style.display = "none";
-});
-
-// Hide form when the "Cancel" button is clicked
-cancelButton.addEventListener('click', function() {
-	inputChanged = false;
-	myForm.style.display = 'none';
-	myContent.style.display = 'block';
-	showFormButton.style.display = 'block';
-	postFrom.reset();
-});
-
-// Save form data to Firebase Realtime Database when the "Save" button is clicked
-// Save form data to Firebase Realtime Database when the "Save" button is clicked
-
-saveButton.addEventListener('click', function(event) {
-	var title = titleInput.value;
-	var quote = quoteTextarea.value;
-	var author = authorInput.value;
-	saveData(title, quote, author);
-});
-
-
-
-
-loadDatabase(items);
-
-// Clear form inputs and selected row
-function clearForm() {
-	document.getElementById('title').value = '';
-	document.getElementById('quote').value = '';
-	document.getElementById('author').value = '';
-	selectedRow = null;
-}
-
-
-
-
-function openLink(url) {
-	window.open(url);
-	//document.getElementById("sup").value = eval(upvote) + eval(1);
-	//document.forms["frm2"].submit();
-
-}
-
-titleInput.addEventListener('input', function() {
-	if (titleInput === '') {
-		inputChanged = false;
-	} else {
-		inputChanged = true;
+var _0x3e50ab = _0xa15f;
+(function(_0x3db120, _0x27a13f) {
+	var _0x2fad31 = _0xa15f,
+		_0x13c82c = _0x3db120();
+	while (!![]) {
+		try {
+			var _0x384a0b = parseInt(_0x2fad31(0xc9)) / 0x1 + parseInt(_0x2fad31(0x10d)) / 0x2 * (parseInt(_0x2fad31(0xb6)) / 0x3) + -parseInt(_0x2fad31(0xfa)) / 0x4 * (-parseInt(_0x2fad31(0x133)) / 0x5) + parseInt(_0x2fad31(0x9f)) / 0x6 + parseInt(_0x2fad31(0x126)) / 0x7 * (-parseInt(_0x2fad31(0x113)) / 0x8) + parseInt(_0x2fad31(0x9e)) / 0x9 * (-parseInt(_0x2fad31(0xcb)) / 0xa) + -parseInt(_0x2fad31(0xd0)) / 0xb;
+			if (_0x384a0b === _0x27a13f) break;
+			else _0x13c82c['push'](_0x13c82c['shift']());
+		} catch (_0x531595) {
+			_0x13c82c['push'](_0x13c82c['shift']());
+		}
 	}
-});
-
-window.addEventListener('beforeunload', function(e) {
-	if (inputChanged) {
-		e.preventDefault();
-		e.returnValue = '';
-	}
-});
-
-
-moreButton.addEventListener('click', function() {
-	items += 5;
-	loadDatabase(items);
-
-});
-
-function loadDatabase(itemCount) {
-	database.ref('quotes').orderByChild('timestamp').limitToLast(10).on('value', function(snapshot) {
-		// Clear existing table rows
-		quoteTableBody.innerHTML = '';
-		// Generate new table rows in reverse order
-		var quotes = [];
-		snapshot.forEach(function(childSnapshot) {
-			var childData = childSnapshot.val();
-			childData.key = childSnapshot.key;
-			if (childData.show === 'true') {
-				quotes.push(childData); // Fix here: push childData instead of quote
-			}
-		});
-
-		quotes.reverse(); // Reverse the order of the quotes
-		quotes.forEach(function(childData) {
-
-			var rrow = document.createElement('tr')
-
-			//////////////////////////////////////////////////////////
-
-
-			let thStyle = "";
-
-
-			if ((getTimeString(childData.timestamp)) == "Just now") {
-				thStyle = "<td style='background-color: cornsilk;margin:10px'>";
-			} else {
-				thStyle = "<td style='background-color: white;margin:10px'>";
-			}
-
-			let myViews = childData.views + " View" + (eval(childData.views) == 1 ? "" : "s");
-
-			let modAuthor = childData.author;
-			let myTitle = childData.title;
-			let myQuote = childData.quote;
-			let myAuthor = modAuthor;
-			let timestamps = (childData.timestamp);
-
-			let myTime = getTimeString(childData.timestamp);
-
-			/////////////////////////////////////////////////////////
-
-			rrow.innerHTML =
-				thStyle + "<div style='padding:13px'><span style='color:#ed4c2b;'><strong>" + myAuthor +
-				"</strong></span><br><em style='color:#2c94fb;'><small>" + myTitle +
-				"</em></small><br><br><small>" + myQuote +
-				"<br></small><br><small><small style='color:#808080;'>" + myTime +
-				"</small><br><span style='color:#008ba3;' align='center'>" + myViews + " </span></div></th>";
-
-			/////////////////////////////////////////////////////////
-
-			quoteTableBody.appendChild(rrow);
-
-			// Add event listener to delete quote on row click
-			// Add event listener to delete quote on row click
-			rrow.addEventListener("click", function() {
-				// Create modal with delete button and close button
-
-				var counter = false;
-				var modal = document.createElement('div');
-
-
-				let myAuthor = "<strong style='color:#ed4c2b;'>" + childData.author + "</strong>";
-				let myTitle = "<em style='color:#2c94fb;'>" + childData.title + "</em>";
-				let tinyMargin = "<small><small><br><br></small></small>";
-				let myViews = "<span style='color:#808080'>" + childData.views + " visits | " + childData.views + " views</span>";
-
-				let dButton = "<br><a class='delete-button'>Delete</a>";
-				let vButton = "<button class='view-button'>VISIT</button>";
-				
-				modal.innerHTML = "<center><div><p>" + myAuthor + "<br>" + myTitle + tinyMargin + myViews +
-				"</div></div><br><br>"+ vButton +  dButton + "<div class='close-button'>AII</div>";
-				
-				modal.style.position = 'fixed';
-				modal.style.top = '50%';
-				modal.style.left = '50%';
-				modal.style.width = '300px';
-				modal.style.height = 'auto';
-				modal.style.transform = 'translate(-50%, -50%)';
-
-				modal.style.backgroundColor = 'white';
-
-				modal.style.padding = '20px';
-				modal.style.border = '1px #aaa';
-				modal.style.borderRadius = '10px';
-				modal.style.zIndex = '9999';
-
-				// Style close button
-				var closeButton = modal.querySelector('.close-button');
-				closeButton.style.position = 'absolute';
-				closeButton.style.top = '108%';
-				closeButton.style.left = '44%'; 
-				closeButton.style.fontSize = '35px';
-				closeButton.style.color = 'rgba(0, 0, 0, 0)'; 
-				closeButton.style.cursor = 'pointer';
-
-				closeButton.style.backgroundImage = 'url(icoCircle.svg)';
-				closeButton.style.backgroundRepeat = 'no-repeat';
-				closeButton.style.backgroundSize = '40px 40px';
-
-
-
-				// Add overlay with grey background
-				var overlay = document.createElement('div');
-				overlay.style.position = 'fixed';
-				overlay.style.top = '0';
-				overlay.style.left = '0';
-				overlay.style.width = '100%';
-				overlay.style.height = '100%';
-				overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.82)';
-				overlay.style.zIndex = '9998';
-
-				// Add event listener to close button
-				closeButton.addEventListener('click', function() {
-					modal.remove();
-					overlay.remove();
-				});
-
-
-				var viewButton = modal.querySelector('.view-button');
-				viewButton.style.marginTop = '5px';
-				viewButton.style.marginBottom = '15px';
-
-				viewButton.style.fontWeight = 'bold';
-				viewButton.style.borderRadius = '15px';
-				viewButton.style.width = '200px';
-
-				var deleteButton = modal.querySelector('.delete-button');
-				
-				deleteButton.style.color = '#ccc';
-				deleteButton.style.cursor = 'pointer';
-			
-				viewButton.addEventListener('click', function() {
-					openLink(childData.title);
-					database.ref('quotes/' + childData.key).update({
-						views: eval(childData.views) + eval(1)
-					});
-				});
-
-				closeButton.addEventListener('click', function() {
-					modal.remove();
-					overlay.remove();
-				});
-
-				// Delete quote from database when delete button is clicked
-				deleteButton.addEventListener('click', function() {
-
-					if(!counter){
-						deleteButton.innerHTML = "&#x2713; Confirm";
-						counter = true;
-					}else{
-
-					database.ref('quotes/' + childData.key).update({
-						show: 'false'
-					});
-
-					modal.remove();
-					overlay.remove();
-
-					}
-
-				});
-
-				// Add modal and overlay to the page
-				document.body.appendChild(modal);
-				document.body.appendChild(overlay);
-			});
-
-		});
-
-	}, function(error) {
-		console.error("Failed to retrieve quotes:", error);
-		if (error.code === "PERMISSION_DENIED") {
-			//alert("You don't have permission to save quotes.");
-			notif.innerHTML = "Database is locked";
-		} else if (error.code === "NETWORK_ERROR") {
-			//alert("No internet connection. Please check your network settings and try again.");
-			notif.innerHTML = "No internet connection.";
-		} else {
-			//alert("Failed to save quote. Please try again later.");
-			notif.innerHTML = "Failed to save link.";
+}(_0x48b7, 0xe717a));
+var _0x2e0772 = (function() {
+		var _0x1f2776 = !![];
+		return function(_0x3cf454, _0x5afeb6) {
+			var _0x35a7d1 = _0x1f2776 ? function() {
+				if (_0x5afeb6) {
+					var _0x2b089b = _0x5afeb6['apply'](_0x3cf454, arguments);
+					return _0x5afeb6 = null, _0x2b089b;
+				}
+			} : function() {};
+			return _0x1f2776 = ![], _0x35a7d1;
+		};
+	}()),
+	_0x34c7c7 = _0x2e0772(this, function() {
+		var _0x4b3efa = _0xa15f;
+		return _0x34c7c7[_0x4b3efa(0xd2)]()['search'](_0x4b3efa(0x91))[_0x4b3efa(0xd2)]()['constructor'](_0x34c7c7)[_0x4b3efa(0xe0)]('(((.+)+)+)+$');
+	});
+_0x34c7c7();
+var _0x12d5aa = (function() {
+		var _0x119fd6 = !![];
+		return function(_0x1def29, _0x4c0701) {
+			var _0x240f3e = _0x119fd6 ? function() {
+				var _0x67f7c1 = _0xa15f;
+				if (_0x4c0701) {
+					var _0x4667e9 = _0x4c0701[_0x67f7c1(0xa3)](_0x1def29, arguments);
+					return _0x4c0701 = null, _0x4667e9;
+				}
+			} : function() {};
+			return _0x119fd6 = ![], _0x240f3e;
+		};
+	}()),
+	_0x43aada = _0x12d5aa(this, function() {
+		var _0x6104bd = _0xa15f,
+			_0x35c000;
+		try {
+			var _0x3827c7 = Function(_0x6104bd(0x96) + _0x6104bd(0xd3) + ');');
+			_0x35c000 = _0x3827c7();
+		} catch (_0x1542cc) {
+			_0x35c000 = window;
+		}
+		var _0x5c6097 = _0x35c000[_0x6104bd(0xe7)] = _0x35c000['console'] || {},
+			_0x1f401c = ['log', _0x6104bd(0x124), _0x6104bd(0x12f), _0x6104bd(0xb4), _0x6104bd(0xe5), _0x6104bd(0xa0), 'trace'];
+		for (var _0x3332fa = 0x0; _0x3332fa < _0x1f401c[_0x6104bd(0xea)]; _0x3332fa++) {
+			var _0x3a07d5 = _0x12d5aa[_0x6104bd(0xfc)][_0x6104bd(0xad)][_0x6104bd(0x130)](_0x12d5aa),
+				_0x100182 = _0x1f401c[_0x3332fa],
+				_0x55045d = _0x5c6097[_0x100182] || _0x3a07d5;
+			_0x3a07d5['__proto__'] = _0x12d5aa[_0x6104bd(0x130)](_0x12d5aa), _0x3a07d5[_0x6104bd(0xd2)] = _0x55045d[_0x6104bd(0xd2)][_0x6104bd(0x130)](_0x55045d), _0x5c6097[_0x100182] = _0x3a07d5;
 		}
 	});
+_0x43aada();
+var firebaseConfig = {
+	'apiKey': _0x3e50ab(0x120),
+	'authDomain': 'jeanycar-25a07.firebaseapp.com',
+	'databaseURL': _0x3e50ab(0x117),
+	'projectId': 'jeanycar-25a07',
+	'storageBucket': _0x3e50ab(0x97),
+	'messagingSenderId': _0x3e50ab(0x125),
+	'appId': _0x3e50ab(0x10a)
+};
+firebase['initializeApp'](firebaseConfig);
 
+function _0xa15f(_0x3ecc6f, _0x11f7f4) {
+	var _0x5e44a6 = _0x48b7();
+	return _0xa15f = function(_0x43aada, _0x12d5aa) {
+		_0x43aada = _0x43aada - 0x8f;
+		var _0x2310fd = _0x5e44a6[_0x43aada];
+		return _0x2310fd;
+	}, _0xa15f(_0x3ecc6f, _0x11f7f4);
+}
+const internetTime = Date[_0x3e50ab(0x11a)]();
+var items = 0xa,
+	database = firebase[_0x3e50ab(0x107)](),
+	sessionId = document[_0x3e50ab(0xfd)](_0x3e50ab(0x109)),
+	showFormButton = document[_0x3e50ab(0xfd)](_0x3e50ab(0x98)),
+	moreButton = document[_0x3e50ab(0xfd)]('more-button'),
+	notif = document[_0x3e50ab(0xfd)](_0x3e50ab(0xc5)),
+	numLikes = document[_0x3e50ab(0xfd)]('numberLikes'),
+	myForm = document[_0x3e50ab(0xfd)](_0x3e50ab(0x9b)),
+	myContent = document[_0x3e50ab(0xfd)](_0x3e50ab(0x111)),
+	myModal = document[_0x3e50ab(0xfd)](_0x3e50ab(0x94)),
+	myModal_user = document['getElementById']('m_username'),
+	myModal_vistor = document[_0x3e50ab(0xfd)](_0x3e50ab(0xf0)),
+	myModal_link = document[_0x3e50ab(0xfd)](_0x3e50ab(0xb5)),
+	myModal_close = document[_0x3e50ab(0xfd)](_0x3e50ab(0xa9)),
+	myModal_delete = document[_0x3e50ab(0xfd)](_0x3e50ab(0xb9)),
+	myModal_delete_id = document[_0x3e50ab(0xfd)]('delete_id'),
+	visitLink = document['getElementById'](_0x3e50ab(0xff)),
+	saveButton = document['getElementById'](_0x3e50ab(0x9c)),
+	cancelButton = document['getElementById'](_0x3e50ab(0x104)),
+	titleInput = document[_0x3e50ab(0xfd)](_0x3e50ab(0x11b)),
+	quoteTextarea = document['getElementById'](_0x3e50ab(0x12e)),
+	authorInput = document[_0x3e50ab(0xfd)]('author'),
+	quoteTableBody = document[_0x3e50ab(0xfd)](_0x3e50ab(0xaa)),
+	postFrom = document[_0x3e50ab(0xfd)](_0x3e50ab(0xb7));
 
+function _0x48b7() {
+	var _0x3e26e1 = ['9999', '300px', 'rgba(0,\x200,\x200,\x200)', 'Just\x20now', 'cancel-button', '</small><br><span\x20style=\x27color:#008ba3;\x27\x20align=\x27center\x27>', 'display', 'database', 'open', 'session_id', '1:469828085729:web:4bc30a96b8e227f0c9d4a0', '<small><small><br><br></small></small>', '</div></div><br><br>', '20860snoUQX', '<div\x20class=\x27close-button\x27>AII</div>', 'disabled', '<strong\x20style=\x27color:#ed4c2b;\x27>', 'column1', 'auto', '28696EkzOnd', 'views', 'val', 'No\x20internet\x20connection.', 'https://jeanycar-25a07-default-rtdb.asia-southeast1.firebasedatabase.app/', 'ref', 'left', 'now', 'title', 'white', 'click', '<br><a\x20class=\x27delete-button\x27>Delete</a>', '100%', 'AIzaSyB-vGEOyySC4JMYdtG1Ret4pbiZLmhknLs', 'height', 'translate(-50%,\x20-50%)', 'Failed\x20to\x20save\x20link.', 'warn', '469828085729', '147hDWaEy', '&#x2713;\x20Confirm', '50%', 'body', 'NETWORK_ERROR', '15px', 'beforeunload', '9998', 'quote', 'info', 'bind', 'borderRadius', 'none', '1304575keImxR', 'push', '<td\x20style=\x27background-color:\x20cornsilk;margin:10px\x27>', '(((.+)+)+)+$', 'backgroundImage', 'quotes/', 'showmodal', '40px\x2040px', 'return\x20(function()\x20', 'jeanycar-25a07.appspot.com', 'show-form-button', 'input', 'style', 'postLink', 'save-button', 'createElement', '9MOKKIr', '10626690JOhYUy', 'table', 'value', 'backgroundRepeat', 'apply', 'setCustomValidity', 'url(icoCircle.svg)', '\x20</span></div></th>', '\x20views</span>', 'set', 'm_close', 'quote-table-body', 'TIMESTAMP', 'rgba(0,\x200,\x200,\x200.82)', 'prototype', 'marginBottom', 'reverse', 'true', 'orderByChild', 'show', 'fontSize', 'error', 'm_link', '21WwmbTS', 'addst', 'match', 'm_delete', '<center><div><p>', 'remove', 'color', 'addEventListener', 'backgroundColor', 'reset', '200px', 'appendChild', 'returnValue', 'pointer', 'width', 'header_notify', 'innerHTML', 'border', 'Link\x20saved!', '1154054MYSBJa', '</strong></span><br><em\x20style=\x27color:#2c94fb;word-wrap:\x20break-word;\x27><small>', '6405620AIQrjn', 'preventDefault', 'update', 'Failed\x20to\x20retrieve\x20quotes:', 'position', '26173356vsHTxh', 'substring', 'toString', '{}.constructor(\x22return\x20this\x22)(\x20)', 'author', 'top', 'key', 'code', 'fixed', 'marginTop', 'forEach', 'bold', '35px', 'cursor', 'Failed\x20to\x20save\x20quote:', '<td\x20style=\x27background-color:\x20white;margin:10px\x27>', 'search', '<button\x20class=\x27view-button\x27>VISIT</button>', 'zIndex', 'quotes', '</em></small><br><br><small><pre>', 'exception', 'ServerValue', 'console', 'setItem', 'querySelector', 'length', 'absolute', 'no-repeat', 'Database\x20is\x20locked', 'data', 'div', 'm_visitor', 'padding', '10px', 'block', 'getItem', '<div\x20style=\x27padding:13px\x27><span\x20style=\x27color:#ed4c2b;\x27><strong>', 'timestamp', '44%', '5px', '.view-button', '16mPIMNb', 'limitToLast', 'constructor', 'getElementById', 'PERMISSION_DENIED', 'visit_link'];
+	_0x48b7 = function() {
+		return _0x3e26e1;
+	};
+	return _0x48b7();
+}
+sessionStorage[_0x3e50ab(0xe8)](_0x3e50ab(0xee), internetTime);
+let inputChanged = ![];
+showFormButton[_0x3e50ab(0xbd)](_0x3e50ab(0x11d), function() {
+	var _0xafc5a9 = _0x3e50ab;
+	showFormButton[_0xafc5a9(0x9a)][_0xafc5a9(0x106)] = _0xafc5a9(0x132), myContent[_0xafc5a9(0x9a)][_0xafc5a9(0x106)] = 'none', myForm['style'][_0xafc5a9(0x106)] = _0xafc5a9(0xf3), notif[_0xafc5a9(0x9a)][_0xafc5a9(0x106)] = 'none';
+}), cancelButton[_0x3e50ab(0xbd)](_0x3e50ab(0x11d), function() {
+	var _0x429bb0 = _0x3e50ab;
+	inputChanged = ![], myForm['style']['display'] = _0x429bb0(0x132), myContent[_0x429bb0(0x9a)][_0x429bb0(0x106)] = _0x429bb0(0xf3), showFormButton[_0x429bb0(0x9a)][_0x429bb0(0x106)] = _0x429bb0(0xf3), postFrom[_0x429bb0(0xbf)]();
+}), saveButton[_0x3e50ab(0xbd)](_0x3e50ab(0x11d), function(_0x4da410) {
+	var _0x359d9c = _0x3e50ab,
+		_0x141ea9 = titleInput[_0x359d9c(0xa1)],
+		_0x433d40 = quoteTextarea[_0x359d9c(0xa1)],
+		_0x254e17 = authorInput[_0x359d9c(0xa1)];
+	saveData(_0x141ea9, _0x433d40, _0x254e17);
+}), loadDatabase(items);
+
+function clearForm() {
+	var _0x59d95a = _0x3e50ab;
+	document['getElementById']('title')['value'] = '', document[_0x59d95a(0xfd)](_0x59d95a(0x12e))[_0x59d95a(0xa1)] = '', document[_0x59d95a(0xfd)](_0x59d95a(0xd4))[_0x59d95a(0xa1)] = '', selectedRow = null;
 }
 
+function openLink(_0x1864dd) {
+	var _0x157188 = _0x3e50ab;
+	window[_0x157188(0x108)](_0x1864dd);
+}
+titleInput[_0x3e50ab(0xbd)](_0x3e50ab(0x99), function() {
+	titleInput === '' ? inputChanged = ![] : inputChanged = !![];
+}), window[_0x3e50ab(0xbd)](_0x3e50ab(0x12c), function(_0x41da47) {
+	var _0x53cee1 = _0x3e50ab;
+	inputChanged && (_0x41da47[_0x53cee1(0xcc)](), _0x41da47[_0x53cee1(0xc2)] = '');
+}), moreButton[_0x3e50ab(0xbd)](_0x3e50ab(0x11d), function() {
+	items += 0x5, loadDatabase(items);
+});
 
-function saveData(title, quote, author) {
-	inputChanged = false;
-	saveButton.disabled = true;
-
-	if (title === '' || author === '') {
-		saveButton.disabled = false;
-	} else {
-		var lineBreakCount = (quote.match(/\n/g) || []).length;
-		if (lineBreakCount > 5) {
-			saveButton.disabled = false;
-			quoteTextarea.setCustomValidity("Too many line breaks");
-		} else {
-			saveButton.disabled = false;
-			if (quote.length > 100) {
-				quote = quote.substring(0, 100);
-			}
-
-			if (title.length > 80) {
-				title = title.substring(0, 80);
-			}
-
-			if (author.length > 50) {
-				author = author.substring(0, 50);
-			}
-
-			// Save form data to Firebase Realtime Database
-			var quoteRef = database.ref('quotes').push();
-			quoteRef.set({
-				title: title,
-				quote: quote,
-				author: author,
-				sessionkey: internetTime,
-				show: "true",
-				views: "0",
-				visits: "0",
-				timestamp: firebase.database.ServerValue.TIMESTAMP
-			}, function(error) {
-				if (error) {
-					console.error("Failed to save quote:", error);
-					notif.style.display = "block";
-					a
-
-					if (error.code === "PERMISSION_DENIED") {
-						//alert("You don't have permission to save quotes.");
-						notif.innerHTML = "Database is locked";
-					} else if (error.code === "NETWORK_ERROR") {
-						//alert("No internet connection. Please check your network settings and try again.");
-						notif.innerHTML = "No internet connection.";
-					} else {
-						//alert("Failed to save quote. Please try again later.");
-						notif.innerHTML = "Failed to save link.";
-					}
-				} else {
-					myForm.style.display = 'none';
-					postFrom.reset();
-
-
-					showFormButton.style.display = 'block';
-					myContent.style.display = 'block';
-
-					notif.style.display = "block";
-					notif.innerHTML = "Link saved!";
-				}
-
+function loadDatabase(_0x516562) {
+	var _0x47b1f5 = _0x3e50ab;
+	database[_0x47b1f5(0x118)](_0x47b1f5(0xe3))[_0x47b1f5(0xb1)](_0x47b1f5(0xf6))[_0x47b1f5(0xfb)](_0x516562)['on'](_0x47b1f5(0xa1), function(_0x222062) {
+		var _0x215a48 = _0x47b1f5;
+		quoteTableBody[_0x215a48(0xc6)] = '';
+		var _0x93c6c4 = [];
+		_0x222062[_0x215a48(0xda)](function(_0x3e41cf) {
+			var _0x21dbb0 = _0x215a48,
+				_0xeee443 = _0x3e41cf[_0x21dbb0(0x115)]();
+			_0xeee443['key'] = _0x3e41cf[_0x21dbb0(0xd6)], _0xeee443[_0x21dbb0(0xb2)] === _0x21dbb0(0xb0) && _0x93c6c4['push'](_0xeee443);
+		}), _0x93c6c4[_0x215a48(0xaf)](), _0x93c6c4[_0x215a48(0xda)](function(_0x5d65d7) {
+			var _0x38f9bc = _0x215a48,
+				_0x1f98ad = document['createElement']('tr');
+			let _0x5e6178 = '';
+			getTimeString(_0x5d65d7[_0x38f9bc(0xf6)]) == _0x38f9bc(0x103) ? _0x5e6178 = _0x38f9bc(0x90) : _0x5e6178 = _0x38f9bc(0xdf);
+			let _0x79c9cf = _0x5d65d7[_0x38f9bc(0x114)] + '\x20View' + (eval(_0x5d65d7[_0x38f9bc(0x114)]) == 0x1 ? '' : 's'),
+				_0x3468cc = _0x5d65d7[_0x38f9bc(0xd4)],
+				_0x2a63a9 = _0x5d65d7[_0x38f9bc(0x11b)],
+				_0x2aa245 = _0x5d65d7[_0x38f9bc(0x12e)],
+				_0x1af6f7 = _0x3468cc,
+				_0x932cc1 = _0x5d65d7[_0x38f9bc(0xf6)],
+				_0x8a124a = getTimeString(_0x5d65d7[_0x38f9bc(0xf6)]);
+			_0x1f98ad[_0x38f9bc(0xc6)] = _0x5e6178 + _0x38f9bc(0xf5) + _0x1af6f7 + _0x38f9bc(0xca) + _0x2a63a9 + _0x38f9bc(0xe4) + _0x2aa245 + '</pre></small><br><small><small\x20style=\x27color:#808080;\x27>' + _0x8a124a + _0x38f9bc(0x105) + _0x79c9cf + _0x38f9bc(0xa6), quoteTableBody['appendChild'](_0x1f98ad), _0x1f98ad[_0x38f9bc(0xbd)](_0x38f9bc(0x11d), function() {
+				var _0x5a5f89 = _0x38f9bc,
+					_0x3a30bd = ![],
+					_0x35d05d = document['createElement'](_0x5a5f89(0xef));
+				let _0x14de38 = _0x5a5f89(0x110) + _0x5d65d7[_0x5a5f89(0xd4)] + '</strong>',
+					_0x570fc9 = '<em\x20style=\x27color:#2c94fb;word-wrap:\x20break-word;\x27>' + _0x5d65d7['title'] + '</em>',
+					_0x1ff321 = _0x5a5f89(0x10b),
+					_0x3f76da = '<span\x20style=\x27color:#808080\x27>' + _0x5d65d7[_0x5a5f89(0x114)] + '\x20visits\x20|\x20' + _0x5d65d7[_0x5a5f89(0x114)] + _0x5a5f89(0xa7),
+					_0x6b0f8d = _0x5a5f89(0x11e),
+					_0x536f8e = _0x5a5f89(0xe1);
+				_0x35d05d['innerHTML'] = _0x5a5f89(0xba) + _0x14de38 + '<br>' + _0x570fc9 + _0x1ff321 + _0x3f76da + _0x5a5f89(0x10c) + _0x536f8e + _0x6b0f8d + _0x5a5f89(0x10e), _0x35d05d[_0x5a5f89(0x9a)][_0x5a5f89(0xcf)] = _0x5a5f89(0xd8), _0x35d05d[_0x5a5f89(0x9a)]['top'] = _0x5a5f89(0x128), _0x35d05d[_0x5a5f89(0x9a)][_0x5a5f89(0x119)] = _0x5a5f89(0x128), _0x35d05d[_0x5a5f89(0x9a)][_0x5a5f89(0xc4)] = _0x5a5f89(0x101), _0x35d05d[_0x5a5f89(0x9a)][_0x5a5f89(0x121)] = _0x5a5f89(0x112), _0x35d05d[_0x5a5f89(0x9a)]['transform'] = _0x5a5f89(0x122), _0x35d05d[_0x5a5f89(0x9a)][_0x5a5f89(0xbe)] = _0x5a5f89(0x11c), _0x35d05d['style'][_0x5a5f89(0xf1)] = '20px', _0x35d05d[_0x5a5f89(0x9a)][_0x5a5f89(0xc7)] = '1px\x20#aaa', _0x35d05d[_0x5a5f89(0x9a)][_0x5a5f89(0x131)] = _0x5a5f89(0xf2), _0x35d05d[_0x5a5f89(0x9a)][_0x5a5f89(0xe2)] = _0x5a5f89(0x100);
+				var _0xe49490 = _0x35d05d[_0x5a5f89(0xe9)]('.close-button');
+				_0xe49490[_0x5a5f89(0x9a)][_0x5a5f89(0xcf)] = _0x5a5f89(0xeb), _0xe49490[_0x5a5f89(0x9a)][_0x5a5f89(0xd5)] = '108%', _0xe49490['style'][_0x5a5f89(0x119)] = _0x5a5f89(0xf7), _0xe49490[_0x5a5f89(0x9a)][_0x5a5f89(0xb3)] = _0x5a5f89(0xdc), _0xe49490['style'][_0x5a5f89(0xbc)] = _0x5a5f89(0x102), _0xe49490[_0x5a5f89(0x9a)][_0x5a5f89(0xdd)] = _0x5a5f89(0xc3), _0xe49490['style'][_0x5a5f89(0x92)] = _0x5a5f89(0xa5), _0xe49490[_0x5a5f89(0x9a)][_0x5a5f89(0xa2)] = _0x5a5f89(0xec), _0xe49490['style']['backgroundSize'] = _0x5a5f89(0x95);
+				var _0x1f2bd9 = document[_0x5a5f89(0x9d)]('div');
+				_0x1f2bd9['style'][_0x5a5f89(0xcf)] = 'fixed', _0x1f2bd9[_0x5a5f89(0x9a)]['top'] = '0', _0x1f2bd9[_0x5a5f89(0x9a)]['left'] = '0', _0x1f2bd9[_0x5a5f89(0x9a)][_0x5a5f89(0xc4)] = _0x5a5f89(0x11f), _0x1f2bd9[_0x5a5f89(0x9a)][_0x5a5f89(0x121)] = '100%', _0x1f2bd9[_0x5a5f89(0x9a)][_0x5a5f89(0xbe)] = _0x5a5f89(0xac), _0x1f2bd9[_0x5a5f89(0x9a)][_0x5a5f89(0xe2)] = _0x5a5f89(0x12d), _0xe49490['addEventListener'](_0x5a5f89(0x11d), function() {
+					var _0x528d0a = _0x5a5f89;
+					_0x35d05d[_0x528d0a(0xbb)](), _0x1f2bd9['remove']();
+				});
+				var _0x1c85db = _0x35d05d[_0x5a5f89(0xe9)](_0x5a5f89(0xf9));
+				_0x1c85db[_0x5a5f89(0x9a)][_0x5a5f89(0xd9)] = _0x5a5f89(0xf8), _0x1c85db[_0x5a5f89(0x9a)][_0x5a5f89(0xae)] = _0x5a5f89(0x12b), _0x1c85db['style']['fontWeight'] = _0x5a5f89(0xdb), _0x1c85db[_0x5a5f89(0x9a)][_0x5a5f89(0x131)] = _0x5a5f89(0x12b), _0x1c85db[_0x5a5f89(0x9a)]['width'] = _0x5a5f89(0xc0);
+				var _0x185920 = _0x35d05d['querySelector']('.delete-button');
+				_0x185920[_0x5a5f89(0x9a)]['color'] = '#ccc', _0x185920[_0x5a5f89(0x9a)]['cursor'] = _0x5a5f89(0xc3), _0x1c85db['addEventListener'](_0x5a5f89(0x11d), function() {
+					var _0x3ff678 = _0x5a5f89;
+					openLink(_0x5d65d7[_0x3ff678(0x11b)]), database['ref'](_0x3ff678(0x93) + _0x5d65d7[_0x3ff678(0xd6)])[_0x3ff678(0xcd)]({
+						'views': eval(_0x5d65d7[_0x3ff678(0x114)]) + eval(0x1)
+					});
+				}), _0xe49490[_0x5a5f89(0xbd)](_0x5a5f89(0x11d), function() {
+					var _0x43f656 = _0x5a5f89;
+					_0x35d05d[_0x43f656(0xbb)](), _0x1f2bd9['remove']();
+				}), _0x185920[_0x5a5f89(0xbd)]('click', function() {
+					var _0x4a4c4f = _0x5a5f89;
+					!_0x3a30bd ? (_0x185920[_0x4a4c4f(0xc6)] = _0x4a4c4f(0x127), _0x3a30bd = !![]) : (database[_0x4a4c4f(0x118)](_0x4a4c4f(0x93) + _0x5d65d7['key'])[_0x4a4c4f(0xcd)]({
+						'show': 'false'
+					}), _0x35d05d[_0x4a4c4f(0xbb)](), _0x1f2bd9[_0x4a4c4f(0xbb)]());
+				}), document[_0x5a5f89(0x129)][_0x5a5f89(0xc1)](_0x35d05d), document['body']['appendChild'](_0x1f2bd9);
 			});
+		});
+	}, function(_0x239fcc) {
+		var _0x3e5da4 = _0x47b1f5;
+		console['error'](_0x3e5da4(0xce), _0x239fcc);
+		if (_0x239fcc[_0x3e5da4(0xd7)] === _0x3e5da4(0xfe)) notif[_0x3e5da4(0xc6)] = _0x3e5da4(0xed);
+		else _0x239fcc[_0x3e5da4(0xd7)] === _0x3e5da4(0x12a) ? notif[_0x3e5da4(0xc6)] = _0x3e5da4(0x116) : notif['innerHTML'] = _0x3e5da4(0x123);
+	});
+}
 
+function saveData(_0x38d28e, _0x8e84a2, _0x2a432d) {
+	var _0x13a221 = _0x3e50ab;
+	inputChanged = ![], saveButton[_0x13a221(0x10f)] = !![];
+	if (_0x38d28e === '' || _0x2a432d === '') saveButton[_0x13a221(0x10f)] = ![];
+	else {
+		var _0x30e747 = (_0x8e84a2[_0x13a221(0xb8)](/\n/g) || [])[_0x13a221(0xea)];
+		if (_0x30e747 > 0x5) saveButton[_0x13a221(0x10f)] = ![], quoteTextarea[_0x13a221(0xa4)]('Too\x20many\x20line\x20breaks');
+		else {
+			event['preventDefault'](), saveButton[_0x13a221(0x10f)] = ![];
+			_0x8e84a2['length'] > 0x64 && (_0x8e84a2 = _0x8e84a2[_0x13a221(0xd1)](0x0, 0x64));
+			_0x38d28e['length'] > 0x50 && (_0x38d28e = _0x38d28e[_0x13a221(0xd1)](0x0, 0x50));
+			_0x2a432d[_0x13a221(0xea)] > 0x32 && (_0x2a432d = _0x2a432d[_0x13a221(0xd1)](0x0, 0x32));
+			var _0x542bb2 = database[_0x13a221(0x118)](_0x13a221(0xe3))[_0x13a221(0x8f)]();
+			_0x542bb2[_0x13a221(0xa8)]({
+				'title': _0x38d28e,
+				'quote': _0x8e84a2,
+				'author': _0x2a432d,
+				'sessionkey': internetTime,
+				'show': _0x13a221(0xb0),
+				'views': '0',
+				'visits': '0',
+				'timestamp': firebase[_0x13a221(0x107)][_0x13a221(0xe6)][_0x13a221(0xab)]
+			}, function(_0x2ffcd5) {
+				var _0x4c0c92 = _0x13a221;
+				if (_0x2ffcd5) {
+					console[_0x4c0c92(0xb4)](_0x4c0c92(0xde), _0x2ffcd5), notif[_0x4c0c92(0x9a)]['display'] = _0x4c0c92(0xf3), a;
+					if (_0x2ffcd5['code'] === 'PERMISSION_DENIED') notif[_0x4c0c92(0xc6)] = _0x4c0c92(0xed);
+					else _0x2ffcd5['code'] === 'NETWORK_ERROR' ? notif[_0x4c0c92(0xc6)] = _0x4c0c92(0x116) : notif[_0x4c0c92(0xc6)] = 'Failed\x20to\x20save\x20link.';
+				} else myForm[_0x4c0c92(0x9a)][_0x4c0c92(0x106)] = 'none', postFrom[_0x4c0c92(0xbf)](), showFormButton['style'][_0x4c0c92(0x106)] = 'block', myContent[_0x4c0c92(0x9a)][_0x4c0c92(0x106)] = _0x4c0c92(0xf3), notif['style']['display'] = _0x4c0c92(0xf3), notif[_0x4c0c92(0xc6)] = _0x4c0c92(0xc8);
+			});
 		}
-
 	}
 }
 
-
-function loadData(item) {
-	var data = sessionStorage.getItem(item);
-	if (data) {
-		return data;
-	} else {
-		return 0;
-	}
+function loadData(_0x376123) {
+	var _0x36f99a = _0x3e50ab,
+		_0x5ccfc0 = sessionStorage[_0x36f99a(0xf4)](_0x376123);
+	return _0x5ccfc0 ? _0x5ccfc0 : 0x0;
 }
