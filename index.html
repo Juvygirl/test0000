@@ -5,7 +5,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <!--<meta http-equiv="refresh" content="30">-->
         <link rel="stylesheet" type="text/css" href="style.css" />
-
+		<style>
+		body {
+			-webkit-user-select: none; /* Safari */
+			-moz-user-select: none; /* Firefox */
+			-ms-user-select: none; /* IE10+/Edge */
+			user-select: none; /* Standard syntax */
+		}
+	</style>
     </head>
     <body>
         <a id="top"></a>
@@ -83,7 +90,52 @@
 				
 				<br />
 
-                
+                <div align="center">
+                    <div id="showmodal" class="modal">
+                        <form class="modal-content">
+                            <div class="container2">
+                                <div align="right">
+								
+								<label id="m_close" align="right" style="font-weight: bold;">
+								[&times;]
+								</label></div>
+								
+								<span  id="numberLikes" style="display:none;"></span>
+								<label id="delete_id"></label>
+												
+                                <bold><label id="m_username" style="font-weight: bold;">username</label></bold>
+								<br>
+								
+                                <bold><small><span id="m_visitor"  style="color:#808080">visitor</span></small></bold>
+                                <br>
+								<br>
+                                <label id="m_link">farmlink</label>
+                                <br />
+                                <label id="toHid" style="display: none;">Enter This Link to Delete</label>
+                                <label id="toHid2" style="display: none;">
+                                    <small><em>(Copying links within this site is prohibited)</em></small>
+                                </label>
+                                <br />
+                                <br />
+                                <input id="toHid3" type="text" placeholder="Paste Link" oninput="document.getElementById('alertHid').style.display = 'none';" style="border: solid #777; width: 100%; display: none;" />
+                                <!--<label id="delID" style="display = 'none'">etwetwe</label>-->
+                                <!--<label id="delID" style="display = 'none'">etwetwe</label>-->
+                                <label id="alertHid" style="display: none;">
+                                    <small><em>DELETE FAILED</em></small>
+                                </label>
+                                <div class="clearfix">
+                                    <button type="button" id="m_delete" class=" " style="background-color: #ddd; font-weight: bold;display: none; margin-bottom:5px">DELETE</button>
+                                    
+									<span style="margin-bottom:100px"></span>
+									
+									<a id="visit_link" href="https://www.gmail.com">
+                                    <button type="button" id="m_openlink" class="" style="background-color: #f44336; font-weight: bold;">VISIT LINK</button>
+									</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
 
             <div id="footer">
@@ -109,6 +161,7 @@
                 <script src="https://www.gstatic.com/firebasejs/8.3.3/firebase-database.js"></script>
                 <script src="app.js"></script>
 				<script src="app_date.js"></script>
+				<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 				<!--<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>-->
             </div>
         </div>
